@@ -21,15 +21,6 @@ export function addOrRemove(arr, val) {
   }
 }
 
-
-
-function randomText(length='short'){
-  if(length === 'short')
-    return (randomWords(2).join(' '))
-  else
-    return (randomWords(4).join(' '))
-}
-
 function generateCard(){
   const front = randomWords(2).join(' ')
   const back = randomWords(2).join(' ')
@@ -53,13 +44,13 @@ function generateDeck(id, title=randomWords(4).join(' ')){
 }
 
 export function generateDecks(size){
-  const newDecks = {}
-
-  _.times(size, () => {
-    const title = randomText('long')
+  let newDecks = _.times(5, () => {
     const id = uuidv4()
-    newDecks[id] = generateDeck(id, title)
+    return generateDeck(id)
   })
+  console.log(newDecks)
+  console.log(newDecks)
+  console.log(newDecks)
 
   return newDecks
 }

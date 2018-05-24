@@ -9,12 +9,12 @@ import { addCardToDeck } from '../actions'
 
 class AddCard extends Component {
   static navigationOptions = ({ navigation }) => ({
-    title: `Add a Card to ${navigation.state.params.title}`
+    title: `Add a Card to ${navigation.state.params.deckTitle}`
   })
 
   submit = (card) => {
-    const id = this.props.navigation.state.params.id
-    this.props.dispatch(addCardToDeck(id, card))
+    const index = this.props.navigation.state.params.deckIndex
+    this.props.dispatch(addCardToDeck(index, card))
     this.props.navigation.goBack();
   }
 
@@ -24,6 +24,7 @@ class AddCard extends Component {
     return(
       <Container>
         <Content padder>
+          <Text>{JSON.stringify(this.props)}</Text>
           <AddCardForm
             handleSubmit={this.submit}
           />

@@ -54,11 +54,10 @@ export function removeDeck (deckID) {
   }
 }
 
-export function addCardToDeck(title,card) {
-  console.log(Object.assign({id: uuidv4()},card))
+export function addCardToDeck(deckIndex,card) {
   return {
     type: ADD_CARD_TO_DECK,
-    deckTitle: title,
+    deckIndex,
     card: Object.assign({id: uuidv4()},card)
   }
 }

@@ -22,6 +22,7 @@
   "dependencies": {
     "expo": "^27.0.1",
     "formik": "^0.11.11",
+    "immutability-helper": "^2.7.0",
     "lodash": "^4.17.10",
     "native-base": "^2.4.5",
     "random-words": "^1.1.0",

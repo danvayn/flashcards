@@ -7,6 +7,8 @@ import {
   POPULATE_DECKS,
 } from '../actions/';
 
+import update from 'immutability-helper';
+
 const initialState = {
 };
 function decks (state = initialState, action) {
@@ -14,28 +16,27 @@ function decks (state = initialState, action) {
     case ADD_DECK:
       return {
         ...state,
-        [action.deck.id]: action.deck,
+        list: [
+          ...state.list,
+          {...action.deck},
+        ]
       }
     case REMOVE_ALL_DECKS:
       return {
+        ...state,
+        list: []
       }
 
     case POPULATE_DECKS:
       return {
         ...state,
-        ...action.decks,
+        list: [
+          ...action.decks,
+        ]
       }
     case ADD_CARD_TO_DECK:
-      return {
-        ...state,
-        [action.deckTitle]: {
-          ...state[action.deckTitle],
-          cards: [
-            ...state[action.deckTitle].cards,
-            action.card
-          ]
-        }
-      }
+      const newData = update(state, {list: { [action.deckIndex]: { cards: {$push: [action.card]}}}})
+      return newData
 
     default :
       return state

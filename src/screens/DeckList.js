@@ -10,7 +10,18 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons'
 
 
 class DeckList extends Component {
-
+  static navigationOptions = ({ navigation }) => ({
+    header: (
+      <Header>
+          <Left/>
+          <Body><Title>Deck List</Title></Body>
+          <Right>
+            <Button transparent>
+            <Icon name='menu'/>
+          </Button>
+          </Right>
+      </Header>
+  )})
   state = {
     selected: ''
   }
@@ -19,10 +30,11 @@ class DeckList extends Component {
 
   }
 
-  selectDeck = (item) => {
+  selectDeck = (title, index) => {
+
     this.props.navigation.navigate(
               'DeckDetails',
-              { id: item.id, title: item.title }
+              { deckTitle: title, deckIndex: index }
             )
   }
 
@@ -30,11 +42,11 @@ class DeckList extends Component {
     return
   }
 
-  renderDeck = ({item}) => {
+  renderDeck = ({item, index}) => {
     return(
       <ListItem icon marginBottom={10}
         selected={this.state.selected === item.title}
-        onPress={() => this.selectDeck(item)}
+        onPress={() => this.selectDeck(item.title, index)}
       >
         <Left><Icon name='pizza'/></Left>
         <Body><Text>{item.title}</Text></Body>
@@ -47,31 +59,18 @@ class DeckList extends Component {
     const { decks } = this.props
 
     return(
-      //field here
       <Container>
-        <Header>
-            <Left/>
-            <Body><Title>Deck List</Title></Body>
-            <Right>
-              <Button transparent>
-              <Icon name='menu'/>
-            </Button>
-            </Right>
-        </Header>
-          <Content padder>
-            <ListItem selected
-              onPress={() => this.props.navigation.navigate('AddDeck',{})}>
-            <Text>Add a new Deck</Text>
-          </ListItem>
-            <FlatList
-              data={Object.values(decks)}
-              renderItem={this.renderDeck}
-              keyExtractor={item => item.title}
-            />
-
-            <Text>{JSON.stringify(decks)}</Text>
-            <Text>{JSON.stringify(this.state)}</Text>
-          </Content>
+        <Content padder>
+          <ListItem selected
+            onPress={() => this.props.navigation.navigate('AddDeck',{})}>
+          <Text>Add a new Deck</Text>
+        </ListItem>
+          <FlatList
+            data={decks}
+            renderItem={this.renderDeck}
+            keyExtractor={item => item.title}
+          />
+        </Content>
       </Container>
     )
   }
@@ -80,7 +79,7 @@ class DeckList extends Component {
 function mapStateToProps(state) {
 
   return {
-    decks: state.decks
+    decks: state.decks.list
   }
 }
 

@@ -30,14 +30,14 @@ const enhancer = withFormik({
 const MyReactNativeForm = props => (
   <Form>
     <Item fixedLabel>
-      <Label>Front</Label>
+      <Label>Question</Label>
       <Input
         onChangeText={text => props.setFieldValue('front', text)}
         value={props.values.email}
       />
     </Item>
     <Item fixedLabel last>
-      <Label>Back</Label>
+      <Label>Answer</Label>
       <Input
         onChangeText={text => props.setFieldValue('back', text)}
         value={props.values.email}
