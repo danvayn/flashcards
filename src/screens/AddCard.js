@@ -24,11 +24,9 @@ class AddCard extends Component {
     return(
       <Container>
         <Content padder>
-          <Text>{JSON.stringify(this.props)}</Text>
           <AddCardForm
             handleSubmit={this.submit}
           />
-        <Text>{JSON.stringify(this.props)}</Text>
         </Content>
       </Container>
     )

@@ -8,10 +8,10 @@ export function timeToString (time = Date.now()) {
   return todayUTC.toISOString().split('T')[0]
 }
 
-// export function deckGenerator
-// function generateCards(front=randomWords(2).join(' '), back=randomWords(2).join(' '), hint='', size=5) {
-//   let x = new Set()
-// }
+
+export function showActionSheet(actionSheet){
+  actionSheet.show()
+}
 
 export function addOrRemove(arr, val) {
   if (!_.includes(arr, val)) {

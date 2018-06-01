@@ -1,101 +1,149 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, Platform, FlatList } from 'react-native'
+import { Alert, StyleSheet, View, Platform, FlatList } from 'react-native'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux';
 import styled from "styled-components";
-import { DeckSwiper, Container, CardItem, Card, Header, Body, Title, Subtitle, Content, Left, Right, Button, Icon, List, ListItem, Text } from 'native-base';
+import { Footer, Container, CardItem, Card, Header, Body, Title, Subtitle, Content, Left, Right, Button, Icon, List, ListItem, Text } from 'native-base';
 import {addOrRemove} from '../utils/helpers'
+import CardDisplay from '../components/CardDisplay'
 import FlashCard from '../components/FlashCard'
 import { white } from '../utils/colors'
+import { connectActionSheet } from '@expo/react-native-action-sheet';
+import { deleteDeck } from '../actions'
 
+@connectActionSheet
 class DeckDetails extends Component {
   static navigationOptions = ({ navigation }) => {
-    const { deckTitle, deckIndex } = navigation.state.params
+    const params = navigation.state.params || {}
 
     return {
-      header: (
-      <Header>
-        <Left>
-          <Button transparent onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" />
-          </Button>
-        </Left>
-          <Title style={styles.headerTitle}>{deckTitle}</Title>
-          <Right>
-            <Button transparent onPress={() => navigation.navigate('AddCard',{deckTitle, deckIndex})}>}>
-              <Icon name="add" />
-            </Button>
-          </Right>
-      </Header>
-    )
+      title: params.deckTitle,
+      headerLeft: (
+        <Button transparent onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" />
+        </Button>
+      ),
+      headerRight: (
+        <Button transparent onPress={() => params.onOpenActionSheet()}>
+          <Icon name="more" />
+        </Button>
+      )
     }
   }
 
-  constructor(){
-    super()
-  this.state = {
-    flippedCards: [],
-    cardIndex: 0,
+
+  componentWillMount() {
+     this.props.navigation.setParams({ onOpenActionSheet: this._onOpenActionSheet });
   }
+
+  _onOpenActionSheet = () => {
+    let options = ['Generate Decks', 'Delete This Deck', 'Cancel'];
+    let generateDecksIndex = 0;
+    let deleteThisDeckIndex = 1;
+    let cancelButtonIndex = 2;
+
+    this.props.showActionSheetWithOptions({
+      options,
+      deleteThisDeckIndex,
+      cancelButtonIndex
+    },
+    (buttonIndex) => {
+      switch (buttonIndex) {
+        case deleteThisDeckIndex:
+          this.onDelete()
+      }
+    });
+  }
+
+  state = {
+    cardIndex: 0,
+    flippedCards: [],
   }
 
   selectCard = (card) => {
     let flipped = this.state.flippedCards
     addOrRemove(flipped, card.id)
-    this.setState({flippedCards: flipped})
+    this.setState({flippedCurrent: flipped})
+  }
+  onDelete = () => {
+    Alert.alert(
+      `Delete Deck`,
+      `Are you sure you want to do this?`,
+      [
+        {text: 'Yes', onPress: () => {this.props.deleteDeck(); this.props.navigation.goBack()}},
+        { text:'No', onPress: () => console.log("exited alert"), style: 'cancel' }
+      ],
+      { onDismiss: () => console.log("dismissed")}
+    )
+    //alert prompt, on confirm deleteDeck
   }
 
   render() {
-
-    const { cards } = this.props
-    const currentIndex = this.state.cardIndex
-    const card = cards[currentIndex]
+    const { deckTitle, deckIndex, cards } = this.props
+    const { flippedCards, cardIndex } = this.state
+    const card = cards[cardIndex]
 
     return(
       <Container>
         <Content>
-            { cards.length !== 0 ? (
-              <View style={styles.cardContainer}>
-                <FlashCard
-                  front={card.front}
-                  back={card.back}
-                  flipped={this.state.flippedCards.includes(card.id) ? true : false}
-                />
-              <View style={styles.cardActions}>
-                <Button iconLeft onPress={() => {
-                  if (cards[currentIndex-1] != null) {
-                    this.setState({...this.state, cardIndex: currentIndex-1})
-                  } else {
-                    this.setState({...this.state, cardIndex: cards.length-1})
-                  }
-                }}>
-                  <Icon name="arrow-back" />
-                  <Text>Previous</Text>
-                </Button>
-                <Button onPress={() => this.selectCard(card)}>
-                  <Text>Flip Card</Text>
-                </Button>
-                <Button iconRight onPress={() => {
-                        if (cards[currentIndex+1] != null) {
-                          this.setState({...this.state, cardIndex: currentIndex+1})
-                        } else {
-                          this.setState({...this.state, cardIndex: 0})
-                        }
-                    }}>
-                  <Text>Next</Text>
-                  <Icon name="arrow-forward" />
-                </Button>
-              </View>
-            }
-            <Button full Primary>
-              <Text>Start Quiz!</Text>
-            </Button>
-            <Button full Primary>
-              <Text>Start Quiz!</Text>
-            </Button>
-          </View>
-          ): (<Text>no cards in deck! add one top right</Text>)}
+          <ListItem icon onPress={() => this.props.navigation.navigate('AddCard',{deckTitle, deckIndex})}>
+            <Left>
+                <Icon name="plane" />
+              </Left>
+              <Body>
+                <Text>Add a Card</Text>
+              </Body>
+              <Right>
+                <Icon name="arrow-forward" />
+              </Right>
+          </ListItem>
+          <ListItem icon onPress={() => this.props.navigation.navigate('TakeQuiz',{deckTitle, deckIndex})}>
+            <Left>
+                <Icon name="plane" />
+              </Left>
+              <Body>
+                <Text>Take a Quiz</Text>
+              </Body>
+              <Right>
+                <Icon name="arrow-forward" />
+              </Right>
+          </ListItem>
+          <Text>{cardIndex+1}/{cards.length} cards</Text>
+          <CardDisplay
+            flipCurrent={this.state.flippedCards.includes(card.id) ? true : false}
+            currentCard={card}
+          >
+          </CardDisplay>
         </Content>
+        <Footer>
+          <Button iconLeft onPress={() => {
+            if (cards[cardIndex-1] != null) {
+              this.setState({...this.state, cardIndex: cardIndex-1})
+
+            } else {
+              this.setState({...this.state, cardIndex: cards.length-1})
+            }
+          }}>
+            <Icon name="arrow-back" />
+            <Text>Previous</Text>
+          </Button>
+          <Button onPress={() => this.selectCard(card)}>
+            <Text>Flip</Text>
+          </Button>
+          <Button onPress={() => this.props.navigation.navigate('EditCard',{deckIndex, cardIndex})}>
+            <Text>Edit</Text>
+          </Button>
+          <Button iconRight onPress={() => {
+                  if (cards[cardIndex+1] != null) {
+                    this.setState({...this.state, cardIndex: cardIndex+1})
+                  } else {
+                    this.setState({...this.state, cardIndex: 0})
+                  }
+              }}>
+            <Text>Next</Text>
+            <Icon name="arrow-forward" />
+          </Button>
+        </Footer>
       </Container>
     )
   }
@@ -116,11 +164,6 @@ const styles = StyleSheet.create({
     right: 0,
 
   },
-  deckStyle: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: 'center',
-  },
   headerTitle: {
     //TODO: figure out what constants can help here
     maxWidth: 300,
@@ -129,7 +172,7 @@ const styles = StyleSheet.create({
   cardContainer: {
       padding: 15,
       flex: 1,
-      justifyContent: "center"
+      // justifyContent: "center"
   }
 })
 
@@ -143,10 +186,19 @@ const cardContainer = ({
 function mapStateToProps(state, {navigation}){
   const deck = state.decks.list[navigation.state.params.deckIndex]
   return {
-    cards: deck.cards
+    deckTitle: deck.title,
+    deckID: deck.id,
+    deckIndex: navigation.state.params.deckIndex,
+    cards: deck.cards,
   }
 }
 
-//<FlashCard card={item}/>
+function mapDispatchToProps(dispatch, {navigation}){
+  const deckIndex = navigation.state.params.deckIndex
+  return {
+    deleteDeck: () => dispatch(deleteDeck(deckIndex))
+  }
+}
 
-export default connect(mapStateToProps)(DeckDetails);
+
+export default connect(mapStateToProps, mapDispatchToProps)(DeckDetails);

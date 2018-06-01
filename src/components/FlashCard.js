@@ -3,7 +3,8 @@ import {
   StyleSheet,
   Animated,
   View,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  TouchableOpacity
 } from 'react-native'
 
 import { Container, Header, Button, Body, Content, Card, CardItem, Text } from 'native-base'
@@ -41,21 +42,40 @@ class FlashCard extends Component {
       }).start()
     }
   }
+  flipCardInstantly(){
+    if(this.value >= 90){
+      Animated.timing(this.animatedValue,{
+        toValue: 0,
+        duration: 1,
+      }).start()
+    } else {
+      Animated.timing(this.animatedValue,{
+        toValue: 180,
+        duration: 1,
+      }).start()
+    }
+
+  }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.flipped !== this.props.flipped) {
+      if(prevProps.front === this.props.front) {
       this.flipCard()
+    } else {
+      this.flipCardInstantly()
+    }
     }
 }
 
   render(){
-    const {front, back, flipped} = this.props
+    const {front, back, onPress, flipped} = this.props
 
     const frontAnimatedStyle = { transform: [{ rotateX: this.frontInterpolate }]}
     const backAnimatedStyle = { transform: [{ rotateX: this.backInterpolate }]}
 
     return (
-      <View>
+        <TouchableWithoutFeedback onPress={onPress}>
+        <View>
         <Animated.View style={[frontAnimatedStyle, styles.flipCard]}>
             <CardItem header>
               <Text style={[styles.cardHeader, styles.questionHeader]}>Question:</Text>
@@ -81,6 +101,7 @@ class FlashCard extends Component {
             </CardItem>
           </Animated.View>
         </View>
+        </TouchableWithoutFeedback>
       )
   }
 

@@ -1,7 +1,8 @@
 import {
   RECEIVE_DECKS,
   ADD_DECK,
-  REMOVE_DECK,
+  EDIT_CARD,
+  DELETE_DECK,
   ADD_CARD_TO_DECK,
   REMOVE_ALL_DECKS,
   POPULATE_DECKS,
@@ -27,6 +28,15 @@ function decks (state = initialState, action) {
         list: []
       }
 
+    case DELETE_DECK:
+      return {
+        ...state,
+        list: [
+          ...state.list.slice(0, action.deckIndex),
+          ...state.list.slice(action.deckIndex+1)
+        ]
+      }
+
     case POPULATE_DECKS:
       return {
         ...state,
@@ -37,6 +47,14 @@ function decks (state = initialState, action) {
     case ADD_CARD_TO_DECK:
       const newData = update(state, {list: { [action.deckIndex]: { cards: {$push: [action.card]}}}})
       return newData
+
+    case EDIT_CARD:
+      const {deckIndex, cardIndex, card} = action
+      const newState = update(state, {list: { [deckIndex]: { cards:  { [cardIndex]: {$set: card}}}}})
+      console.log(action)
+      return newState
+
+
 
     default :
       return state

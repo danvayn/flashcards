@@ -6,7 +6,7 @@ import { withFormik } from 'formik';
 
 const enhancer = withFormik({
   // Transform outer props into form values
-  mapPropsToValues: props => ({ front: '', back: ''}),
+  mapPropsToValues: props => ({ front: props.card.front, back: props.card.back}),
   validate: (values, props) => {
     const errors = {};
     if (!values.front) {
@@ -24,7 +24,7 @@ const enhancer = withFormik({
     }
   ) => {
 
-    props.handleSubmit({front: values.front, back: values.back})
+    props.handleSubmit({front: values.front, back: values.back, id: props.card.id})
   }
 })
 const MyReactNativeForm = props => (

@@ -6,9 +6,13 @@ export const RECEIVE_DECKS = 'RECEIVE_DECKS'
 export const REMOVE_ALL_DECKS = 'REMOVE_ALL_DECKS'
 export const POPULATE_DECKS = 'POPULATE_DECKS'
 export const ADD_DECK = 'ADD_DECK'
-export const REMOVE_DECK = 'REMOVE_DECK'
+export const DELETE_DECK = 'DELETE_DECK'
 export const ADD_CARD_TO_DECK = 'ADD_CARD_TO_DECK'
-export const REMOVE_CARD = 'REMOVE_CARD'
+export const DELETE_CARD = 'DELETE_CARD'
+
+export const EDIT_CARD = 'EDIT_CARD'
+
+
 
 
 export const actionError = error => ({
@@ -61,10 +65,25 @@ export function addCardToDeck(deckIndex,card) {
     card: Object.assign({id: uuidv4()},card)
   }
 }
-
-export function removeCardFromDeck(card) {
+export function editCard(deckIndex,cardIndex,card){
   return {
-    type: REMOVE_CARD,
+    type: EDIT_CARD,
+    deckIndex,
+    cardIndex,
     card
+  }
+}
+
+export function removeCardFromDeck(cardID) {
+  return {
+    type: DELETE_CARD,
+    id: cardID
+  }
+}
+
+export function deleteDeck(deckIndex) {
+  return {
+    type: DELETE_DECK,
+    deckIndex
   }
 }
