@@ -74,10 +74,11 @@ export function editCard(deckIndex,cardIndex,card){
   }
 }
 
-export function removeCardFromDeck(cardID) {
+export function deleteCard(deckIndex, cardID) {
   return {
     type: DELETE_CARD,
-    id: cardID
+    deckIndex,
+    cardID
   }
 }
 

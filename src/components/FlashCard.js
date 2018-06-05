@@ -3,17 +3,16 @@ import {
   StyleSheet,
   Animated,
   View,
-  TouchableWithoutFeedback,
   TouchableOpacity
 } from 'react-native'
 
 import { Container, Header, Button, Body, Content, Card, CardItem, Text } from 'native-base'
-import { black, white } from '../utils/colors'
+import { green, red, black, white } from '../utils/colors'
 
 
 class FlashCard extends Component {
-
-  componentWillMount(){
+  constructor(){
+    super()
     this.animatedValue = new Animated.Value(0)
     this.value = 0
     this.animatedValue.addListener(({value}) => {
@@ -43,21 +42,6 @@ class FlashCard extends Component {
     }
   }
 
-  flipCardInstantly(){
-    if(this.value >= 90){
-      Animated.timing(this.animatedValue,{
-        toValue: 0,
-        // duration: 1,
-      }).start()
-    } else {
-      Animated.timing(this.animatedValue,{
-        toValue: 180,
-        duration: 1,
-      }).start()
-    }
-  }
-
-
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.flipped !== this.props.flipped) {
       if(prevProps.front === this.props.front) {
@@ -78,7 +62,7 @@ class FlashCard extends Component {
     const backAnimatedStyle = { transform: [{ rotateX: this.backInterpolate }]}
 
     return (
-        <TouchableWithoutFeedback onPress={onPress}>
+        <TouchableOpacity onPress={onPress}>
         <View>
         <Animated.View style={[frontAnimatedStyle, styles.flipCard]}>
             <CardItem header>
@@ -111,7 +95,7 @@ class FlashCard extends Component {
             )}
           </Animated.View>
         </View>
-        </TouchableWithoutFeedback>
+      </TouchableOpacity>
       )
   }
 
@@ -119,7 +103,13 @@ class FlashCard extends Component {
 
 const styles = StyleSheet.create({
   cardHeader: {
-
+    fontSize: 15,
+  },
+  questionHeader: {
+    color: green,
+  },
+  answerHeader: {
+    color: red,
   },
   flipCard: {
     borderRadius: 5,

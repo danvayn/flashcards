@@ -3,7 +3,6 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons'
 import { Platform } from 'react-native'
 import { TabNavigator, StackNavigator, createStackNavigator } from 'react-navigation'
 
-import Modal from './components/Modal'
 import DeckList from './screens/DeckList'
 import AddDeck from './screens/AddDeck'
 import AddCard from './screens/AddCard'
@@ -13,43 +12,30 @@ import TakeQuiz from './screens/TakeQuiz'
 
 import { purple, white } from './utils/colors'
 
-const NavigationStack = StackNavigator({
-  Home: {
-    screen: DeckList,
-  },
-  AddDeck: {
-    screen: AddDeck
-  },
-  AddCard: {
-    screen: AddCard
-  },
-  EditCard: {
-    screen: EditCard
-  },
-  DeckDetails: {
-    screen: DeckDetails
-  },
-  TakeQuiz: {
-    screen: TakeQuiz
-  },
-})
-
-
-const RootStack = StackNavigator(
+const NavigationStack = StackNavigator(
   {
-    Main: {
-      screen: NavigationStack
+    DeckList: {
+      screen: DeckList,
     },
-    Modal: {
-      screen: Modal
+    AddDeck: {
+      screen: AddDeck
     },
-  },
-  {
-    mode: 'modal',
-    headerMode: 'none',
+    AddCard: {
+      screen: AddCard
+    },
+    EditCard: {
+      screen: EditCard
+    },
+    DeckDetails: {
+      screen: DeckDetails
+    },
+    TakeQuiz: {
+      screen: TakeQuiz
+    },
+  }, {
+    initialRouteName: 'DeckList'
   }
 
 )
 
-export default RootStack
-// export default NavigationStack
+export default NavigationStack

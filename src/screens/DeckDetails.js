@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import styled from "styled-components";
 import CenteredText from '../components/CenteredText'
 import CardActions from '../components/actions/Card'
+import TextButton from '../components/TextButton'
 import { Footer, Container, CardItem, Card, Header, Body, Title, Subtitle, Content, Left, Right, Button, Icon, List, ListItem, Text } from 'native-base';
 import {addOrRemove} from '../utils/helpers'
 import CardContainer from '../containers/Card'
@@ -41,6 +42,15 @@ class DeckDetails extends Component {
 
   componentWillMount() {
      this.props.navigation.setParams({ onOpenActionSheet: this._onOpenActionSheet });
+  }
+  componentDidUpdate() {
+    if(this.props.cards.length > 0 && this.props.cards[this.state.cardIndex] === undefined){
+      if(this.props.cards[this.state.cardIndex-1] === undefined){
+        this.setState({...this.state, cardIndex: 0})
+      } else {
+        this.setState({...this.state, cardIndex: this.state.cardIndex-1})
+      }
+    }
   }
 
   onFlip = (id) => {
@@ -81,9 +91,9 @@ class DeckDetails extends Component {
   }
 
   render() {
-    const { deckTitle, deckIndex, cards } = this.props
+    const { deckTitle, deckIndex } = this.props
     const { flippedCards, cardIndex } = this.state
-    const card = cards[cardIndex]
+    const card = this.props.cards[this.state.cardIndex]
 
 
     return(
@@ -99,21 +109,23 @@ class DeckDetails extends Component {
                 <Icon name="arrow-forward" />
               </Right>
           </ListItem>
-          <ListItem icon onPress={() => this.props.navigation.navigate('TakeQuiz',{deckTitle, deckIndex})}>
-            <Left>
-                <Icon name="plane" />
-              </Left>
-              <Body>
-                <Text>Take a Quiz</Text>
-              </Body>
-              <Right>
-                <Icon name="arrow-forward" />
-              </Right>
-          </ListItem>
+          {this.props.cards.length > 0 &&
+            <ListItem icon onPress={() => this.props.navigation.navigate('TakeQuiz',{deckTitle, deckIndex})}>
+              <Left>
+                  <Icon name="plane" />
+                </Left>
+                <Body>
+                  <Text>Take a Quiz</Text>
+                </Body>
+                <Right>
+                  <Icon name="arrow-forward" />
+                </Right>
+            </ListItem>
+          }
           <View style={styles.deckContainer}>
           {card ?
             (<View style={styles.deckDisplay}>
-              <CenteredText>Card {cardIndex+1} out of the {cards.length} in this deck.</CenteredText>
+              <CenteredText>Card {this.state.cardIndex+1} out of the {this.props.cards.length} in this deck.</CenteredText>
               <CardContainer
                 flipCurrent={this.state.flippedCards.includes(card.id) ? true : false}
                 currentCard={card}
@@ -123,7 +135,11 @@ class DeckDetails extends Component {
               </CardContainer>
             </View>
             ) : (
-              <View><Text>Hey new guy! Add a card!</Text></View>
+              <View>
+                <TextButton style={{textAlign: 'center', fontSize: 20}} onPress={() => this.props.navigation.navigate('AddCard',{deckTitle, deckIndex})}>
+                  Hey! Press here to add a new card to this deck.
+                </TextButton>
+              </View>
             )
           }
         </View>

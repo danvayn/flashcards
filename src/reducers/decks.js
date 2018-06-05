@@ -2,6 +2,7 @@ import {
   RECEIVE_DECKS,
   ADD_DECK,
   EDIT_CARD,
+  DELETE_CARD,
   DELETE_DECK,
   ADD_CARD_TO_DECK,
   REMOVE_ALL_DECKS,
@@ -49,12 +50,13 @@ function decks (state = initialState, action) {
       return newData
 
     case EDIT_CARD:
-      const {deckIndex, cardIndex, card} = action
-      const newState = update(state, {list: { [deckIndex]: { cards:  { [cardIndex]: {$set: card}}}}})
+      const newState = update(state, {list: { [action.deckIndex]: { cards:  { [action.cardIndex]: {$set: action.card}}}}})
       return newState
 
-
-
+    case DELETE_CARD:
+      const filteredCards = state.list[action.deckIndex].cards.filter(card => card.id != action.cardID)
+      const deleteState = update(state, {list: { [action.deckIndex]: { cards: { $set: filteredCards }}}})
+      return deleteState
     default :
       return state
   }

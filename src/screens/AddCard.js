@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import styled from "styled-components"
 import { connect } from 'react-redux'
+import { View } from 'react-native'
 import { Container, Content, Text } from 'native-base'
 import AddCardForm from '../components/forms/AddCard'
 import { white, black } from '../utils/colors';
@@ -22,12 +23,12 @@ class AddCard extends Component {
 
   render() {
     return(
-      <Container>
-        <Content padder>
+      <Container style={{flex: 1, justifyContent: 'center',}}>
+        <View>
           <AddCardForm
             handleSubmit={this.submit}
           />
-        </Content>
+      </View>
       </Container>
     )
   }

@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import { StyleSheet, View, Platform, FlatList } from 'react-native'
 import TextButton from '../components/TextButton'
-import { Container, Header, Body, Title, Content, Left, Right, Button, Icon, List, ListItem, Text } from 'native-base';
+import { Container, Body, Content, Left, Right, Button, Icon, ListItem, Text } from 'native-base';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import {green} from '../utils/colors'
+import {purple, gray} from '../utils/colors'
 import { FontAwesome, Ionicons } from '@expo/vector-icons'
 import { connectActionSheet } from '@expo/react-native-action-sheet';
+import DeckListItem from '../components/DeckListItem'
 import { populateDecks, removeAllDecks } from '../actions'
 
 @connectActionSheet
@@ -29,11 +29,7 @@ class DeckList extends Component {
      this.props.navigation.setParams({ onOpenActionSheet: this._onOpenActionSheet });
   }
 
-  state = {
-    selected: ''
-  }
-
-  selectDeck = (title, index) => {
+  onPressDeck = (title, index) => {
     this.props.navigation.navigate(
       'DeckDetails',
       { deckTitle: title, deckIndex: index }
@@ -46,14 +42,49 @@ class DeckList extends Component {
 
   renderDeck = ({item, index}) => {
     return(
-      <ListItem icon marginBottom={10}
-        selected={this.state.selected === item.title}
-        onPress={() => this.selectDeck(item.title, index)}
-      >
-        <Left><Icon name='pizza'/></Left>
-        <Body><Text>{item.title}</Text></Body>
-        <Right><Icon name='pizza'/></Right>
-      </ListItem>
+      //deckitem component here
+      <View style={{width: "100%"}}>
+        <DeckListItem
+          deck={item}
+          onPress={() => this.onPressDeck(item.title, index)}
+        />
+      </View>
+    )
+  }
+  renderSeparator = () => {return (
+    <View style={styles.separator}/>
+  )}
+
+  render() {
+    const { decks } = this.props
+    const renderHeader = (
+      <Button full
+          style={{backgroundColor:purple}}
+          onPress={() => this.props.navigation.navigate('AddDeck',{})}>
+          <Text>Add a new Deck</Text>
+      </Button>)
+    return(
+      //field here
+      <Container>
+          {decks.length > 0 ? (
+            <Content>
+              <FlatList
+                data={decks}
+                ItemSeparatorComponent={this.renderSeparator}
+                ListHeaderComponent={renderHeader}
+                renderItem={this.renderDeck}
+                keyExtractor={item => item.id}
+              />
+            </Content>) : (
+            <View style={styles.container}>
+              {renderHeader}
+              <View style={styles.tipContainer}>
+                <Text style={styles.tipText}>Get Started by adding a deck!</Text>
+              </View>
+            </View>
+            )
+          }
+      </Container>
     )
   }
 
@@ -78,30 +109,39 @@ class DeckList extends Component {
           this.props.generateDecks(10)
           break
       }
-    });
-  }
-
-  render() {
-    const { decks } = this.props
-
-    return(
-      //field here
-      <Container>
-        <Content padder>
-          <ListItem selected
-            onPress={() => this.props.navigation.navigate('AddDeck',{})}>
-          <Text>Add a new Deck</Text>
-        </ListItem>
-          <FlatList
-            data={decks}
-            renderItem={this.renderDeck}
-            keyExtractor={item => item.title}
-          />
-        </Content>
-      </Container>
-    )
+    })
   }
 }
+
+const styles = StyleSheet.create({
+  header: {
+    padding: 10,
+    backgroundColor: purple,
+  },
+  addButton: {
+    width: "100%",
+  },
+  separator: {
+    height: 1,
+    width: "100%",
+    backgroundColor: "#CED0CE",
+  },
+  container: {
+    minWidth: "100%",
+    minHeight: "100%",
+  },
+  tipContainer: {
+    flex: 1,
+    maxWidth: "100%",
+    maxHeight: "100%",
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tipText: {
+    textAlign: 'center'
+  },
+})
+
 
 function mapStateToProps(state) {
 

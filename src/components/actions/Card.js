@@ -1,30 +1,39 @@
 import React from 'react'
-import {View } from 'react-native'
+import {View, StyleSheet } from 'react-native'
 import {Button, Icon, Text} from 'native-base'
 
 const CardActions = (props) => {
   const actionStyle = props.style || {}
   return(
-    <View style={[cardActions, actionStyle]}>
-      <Button iconLeft onPress={() => props.onPrevious()}>
+    <View style={[styles.cardActions, actionStyle]}>
+      <Button style={styles.actionButton} iconLeft onPress={() => props.onPrevious()}>
         <Icon name="arrow-back" />
         <Text>Previous</Text>
       </Button>
-      <Button onPress={() => props.onFlip()}>
-        <Text>Flip</Text>
+      <Button block style={styles.actionButton} onPress={() => props.onFlip()}>
+        <Text>Flip Card</Text>
       </Button>
-      <Button iconRight onPress={() => props.onNext()}>
+      <Button style={styles.actionButton}  iconRight onPress={() => props.onNext()}>
         <Text>Next</Text>
         <Icon name="arrow-forward" />
       </Button>
     </View>
   )
 }
-const cardActions = {
-  flex: 1,
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  paddingTop: 10,
-}
+
+const styles = StyleSheet.create({
+  cardActions: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    paddingTop: 10,
+  },
+  actionButton: {
+    flex: 1,
+    marginLeft: 5,
+    marginRight: 5,
+  }
+
+})
 
 export default CardActions

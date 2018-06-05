@@ -4,7 +4,6 @@ import styled from "styled-components"
 import { connect } from 'react-redux'
 import { Container, Content, Text, Button } from 'native-base'
 import EditCardForm from '../components/forms/EditCard'
-import { white, black } from '../utils/colors';
 import { editCard } from '../actions'
 
 class EditCard extends Component {

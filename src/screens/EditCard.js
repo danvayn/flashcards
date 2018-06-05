@@ -2,12 +2,17 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import styled from "styled-components"
 import { connect } from 'react-redux'
+import { View } from 'react-native'
 import { Container, Content, Text, Button } from 'native-base'
+import { Alert } from 'react-native'
 import EditCardForm from '../components/forms/EditCard'
 import { white, black } from '../utils/colors';
-import { editCard } from '../actions'
+import { editCard, deleteCard } from '../actions'
 
 class EditCard extends Component {
+  state = {
+    card: this.props.card
+  }
   static navigationOptions = ({ navigation }) => ({
     title: `Edit Card #${navigation.state.params.cardIndex + 1}`
   })
@@ -30,24 +35,24 @@ class EditCard extends Component {
   }
 
   deleteCard = (cardID) => {
-    this.props.dispatch(deleteCard(navigation.state.params.cardID))
-    this.props.navigation.goBack();
+    this.props.deleteCard(this.props.card.id)
+    this.props.navigation.goBack()
   }
 
 
   render() {
 
     return(
-      <Container>
-        <Content padder>
+      <Container style={{flex: 1, justifyContent: 'center',}}>
+        <View>
           <EditCardForm
-            card={this.props.card}
+            card={this.state.card}
             handleSubmit={this.onSubmit}
           />
-        <Button onPress={() => this.deleteCard()}>
+        <Button full style={{marginTop: 15}} onPress={() => this.onDelete()}>
             <Text>Delete Card</Text>
           </Button>
-        </Content>
+        </View>
       </Container>
     )
   }
@@ -64,10 +69,9 @@ function mapStateToProps(state, {navigation}){
 
 function mapDispatchToProps(dispatch, {navigation}){
     const {deckID, deckIndex, cardIndex } = navigation.state.params
-
   return {
     editCard: (card) => { dispatch(editCard(deckIndex, cardIndex, card))},
-    deleteCard: (cardID) => { dispatch(deleteCard({cardID, deckID})) },
+    deleteCard: (cardID) => { dispatch(deleteCard(deckIndex, cardID)) },
   }
 
 }
