@@ -3,21 +3,37 @@ import { Alert, StyleSheet, View, Platform, FlatList } from 'react-native'
 import PropTypes from 'prop-types'
 import styled from "styled-components"
 import { connect } from 'react-redux';
-import CardDisplay from '../components/CardDisplay'
+import CardContainer from '../containers/Card'
+import CenteredText from '../components/CenteredText'
+import QuizActions from '../components/actions/Quiz'
 import { Container, CardItem, Card, Header, Body, Title, Subtitle, Content, Left, Right, Button, Icon, List, ListItem, Text } from 'native-base';
-import { saveQuiz } from '../actions/index'
+import { clearLocalNotification, setLocalNotification } from '../utils/notifications'
 
 class TakeQuiz extends React.Component {
+
+  static navigationOptions = ({ navigation }) => {
+    const params = navigation.state.params || {}
+    const title = navigation.state.params.title || 'Test your knowledge!'
+    return {
+      title: title,
+      headerLeft: (
+        <Button transparent onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" />
+        </Button>
+      ),
+    }
+  }
+
   state = {
     currentScore: 0,
+    currentTotal: 0,
     cardIndex: 0,
     cards: this.props.cards,
-    showAnswer: false,
+    questionAnswered: false,
   }
 
   showResults = () => {
-    //show results modal, on modal exit go back to deck
-    console.log("lol")
+    clearLocalNotification().then(setLocalNotification)
     Alert.alert(
       `Quiz Complete!`,
       `You got ${this.state.currentScore}/${this.state.cards.length} cards right!
@@ -32,22 +48,27 @@ class TakeQuiz extends React.Component {
 
   resetQuiz = () => {
     const cards = this.state.cards //shuffle Cards here
-    this.setState({cardIndex: 0, cards: cards, showAnswer: false, currentScore: 0})
+    this.setState({cardIndex: 0, cards: cards, questionAnswered: false, currentScore: 0, currentTotal: 0})
   }
 
-  showAnswer = () => {
-    this.setState({...this.state, showAnswer: true})
+  showFeedback = () => {
+    this.setState({...this.state, questionAnswered: true})
   }
-  countCorrect = () => {
+  incrementScore = () => {
     const nextScore = this.state.currentScore + 1
-    this.setState({...this.state, currentScore: nextScore }, () => {this.goNext()})
+    this.setState({...this.state,currentScore: nextScore }, () => {this.goNext()})
+  }
+  incrementTotal = () => {
+    const nextTotal = this.state.currentTotal + 1
+    this.setState({...this.state, currentTotal: nextTotal })
   }
   goNext = () => {
     const nextIndex = this.state.cardIndex + 1
     if(this.state.cards[nextIndex]){
-    this.setState({...this.state, showAnswer: false, cardIndex: nextIndex})
-    }
-    else {
+      this.setState({ ...this.state, questionAnswered: false, cardIndex: nextIndex },
+        () => {this.incrementTotal()})
+    } else {
+      this.setState({ ...this.state, questionAnswered: false }, () => {this.incrementTotal()})
       this.showResults()
     }
   }
@@ -56,23 +77,39 @@ class TakeQuiz extends React.Component {
     const {cards, cardIndex} = this.state
     return(
       <Container>
-        <Content>
-          <Text>{ this.state.currentScore }/{this.state.cards.length}</Text>
+        <View style={styles.deckDisplay}>
+          { this.state.cardIndex > 0 ? (
+            <CenteredText>Score: { this.state.currentScore }/{this.state.currentTotal}</CenteredText>
+            ) : (<CenteredText>Answer the prompts below to progress.</CenteredText>)
+          }
 
-          <CardDisplay
-            flipCurrent={this.state.showAnswer}
+          <CardContainer
+            flipCurrent={this.state.questionAnswered}
             currentCard={cards[cardIndex]}
           >
-          </CardDisplay>
-          { this.state.showAnswer ? (    <View>
-                <Button onPress={() => this.countCorrect()}><Text>Correct</Text></Button>
-                <Button onPress={() => this.goNext()}><Text>Incorrect</Text></Button>
-              </View>):(<Button onPress={() => this.showAnswer()}><Text>Show Answer</Text></Button>) }
-        </Content>
+            <QuizActions
+              incrementScore={this.incrementScore}
+              goNext={this.goNext}
+              showFeedback={this.showFeedback}
+              questionAnswered={this.state.questionAnswered}
+              cardsLeft={this.state.cards.length-this.state.cardIndex}
+            />
+          </CardContainer>
+        </View>
       </Container>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  deckDisplay: {
+    padding: 20,
+    backgroundColor: "#FDFBF2",
+    flex: 1,
+  },
+})
+
+
 
 function mapStateToProps(state, {navigation}){
   const deck = state.decks.list[navigation.state.params.deckIndex]
@@ -85,13 +122,9 @@ function mapStateToProps(state, {navigation}){
 }
 
 function mapDispatchToProps(dispatch, {navigation}){
-
-    // PopulateDecks, also have cards
-    //deleteDecks
   return {
     recordQuiz: ({quiz}) => { dispatch(saveQuiz(quiz)) },
   }
-
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TakeQuiz)

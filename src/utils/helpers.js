@@ -2,15 +2,12 @@ import randomWords from 'random-words'
 import {v4 as uuidv4} from 'uuid'
 import _ from 'lodash'
 
+const NOTIFICATION_KEY = 'FlashCards:notifications'
+
 export function timeToString (time = Date.now()) {
   const date = new Date(time)
   const todayUTC = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
   return todayUTC.toISOString().split('T')[0]
-}
-
-
-export function showActionSheet(actionSheet){
-  actionSheet.show()
 }
 
 export function addOrRemove(arr, val) {

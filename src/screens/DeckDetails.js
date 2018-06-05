@@ -3,9 +3,11 @@ import { Alert, StyleSheet, View, Platform, FlatList } from 'react-native'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux';
 import styled from "styled-components";
+import CenteredText from '../components/CenteredText'
+import CardActions from '../components/actions/Card'
 import { Footer, Container, CardItem, Card, Header, Body, Title, Subtitle, Content, Left, Right, Button, Icon, List, ListItem, Text } from 'native-base';
 import {addOrRemove} from '../utils/helpers'
-import CardDisplay from '../components/CardDisplay'
+import CardContainer from '../containers/Card'
 import FlashCard from '../components/FlashCard'
 import { white } from '../utils/colors'
 import { connectActionSheet } from '@expo/react-native-action-sheet';
@@ -13,6 +15,7 @@ import { deleteDeck } from '../actions'
 
 @connectActionSheet
 class DeckDetails extends Component {
+
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params || {}
 
@@ -31,40 +34,21 @@ class DeckDetails extends Component {
     }
   }
 
-
-  componentWillMount() {
-     this.props.navigation.setParams({ onOpenActionSheet: this._onOpenActionSheet });
-  }
-
-  _onOpenActionSheet = () => {
-    let options = ['Generate Decks', 'Delete This Deck', 'Cancel'];
-    let generateDecksIndex = 0;
-    let deleteThisDeckIndex = 1;
-    let cancelButtonIndex = 2;
-
-    this.props.showActionSheetWithOptions({
-      options,
-      deleteThisDeckIndex,
-      cancelButtonIndex
-    },
-    (buttonIndex) => {
-      switch (buttonIndex) {
-        case deleteThisDeckIndex:
-          this.onDelete()
-      }
-    });
-  }
-
   state = {
     cardIndex: 0,
     flippedCards: [],
   }
 
-  selectCard = (card) => {
+  componentWillMount() {
+     this.props.navigation.setParams({ onOpenActionSheet: this._onOpenActionSheet });
+  }
+
+  onFlip = (id) => {
     let flipped = this.state.flippedCards
-    addOrRemove(flipped, card.id)
+    addOrRemove(flipped, id)
     this.setState({flippedCurrent: flipped})
   }
+
   onDelete = () => {
     Alert.alert(
       `Delete Deck`,
@@ -75,7 +59,25 @@ class DeckDetails extends Component {
       ],
       { onDismiss: () => console.log("dismissed")}
     )
-    //alert prompt, on confirm deleteDeck
+  }
+
+  onNext = () => {
+    const nextIndex = this.state.cardIndex + 1
+    if (this.props.cards[nextIndex] != null) {
+      this.setState({...this.state, cardIndex: nextIndex})
+    } else {
+      this.setState({...this.state, cardIndex: 0})
+    }
+  }
+
+  onPrevious = () => {
+    const previousIndex = this.state.cardIndex - 1
+    if (this.props.cards[previousIndex] != null) {
+      this.setState({...this.state, cardIndex: previousIndex})
+
+    } else {
+      this.setState({...this.state, cardIndex: this.props.cards.length-1})
+    }
   }
 
   render() {
@@ -83,9 +85,9 @@ class DeckDetails extends Component {
     const { flippedCards, cardIndex } = this.state
     const card = cards[cardIndex]
 
+
     return(
       <Container>
-        <Content>
           <ListItem icon onPress={() => this.props.navigation.navigate('AddCard',{deckTitle, deckIndex})}>
             <Left>
                 <Icon name="plane" />
@@ -108,79 +110,61 @@ class DeckDetails extends Component {
                 <Icon name="arrow-forward" />
               </Right>
           </ListItem>
-          <Text>{cardIndex+1}/{cards.length} cards</Text>
-          <CardDisplay
-            flipCurrent={this.state.flippedCards.includes(card.id) ? true : false}
-            currentCard={card}
-          >
-          </CardDisplay>
-        </Content>
-        <Footer>
-          <Button iconLeft onPress={() => {
-            if (cards[cardIndex-1] != null) {
-              this.setState({...this.state, cardIndex: cardIndex-1})
-
-            } else {
-              this.setState({...this.state, cardIndex: cards.length-1})
-            }
-          }}>
-            <Icon name="arrow-back" />
-            <Text>Previous</Text>
-          </Button>
-          <Button onPress={() => this.selectCard(card)}>
-            <Text>Flip</Text>
-          </Button>
-          <Button onPress={() => this.props.navigation.navigate('EditCard',{deckIndex, cardIndex})}>
-            <Text>Edit</Text>
-          </Button>
-          <Button iconRight onPress={() => {
-                  if (cards[cardIndex+1] != null) {
-                    this.setState({...this.state, cardIndex: cardIndex+1})
-                  } else {
-                    this.setState({...this.state, cardIndex: 0})
-                  }
-              }}>
-            <Text>Next</Text>
-            <Icon name="arrow-forward" />
-          </Button>
-        </Footer>
+          <View style={styles.deckContainer}>
+          {card ?
+            (<View style={styles.deckDisplay}>
+              <CenteredText>Card {cardIndex+1} out of the {cards.length} in this deck.</CenteredText>
+              <CardContainer
+                flipCurrent={this.state.flippedCards.includes(card.id) ? true : false}
+                currentCard={card}
+                onPress={() => this.props.navigation.navigate('EditCard',{deckIndex, cardIndex})}
+              >
+                <CardActions onPrevious={this.onPrevious} onNext={this.onNext} onFlip={() => this.onFlip(card.id)}/>
+              </CardContainer>
+            </View>
+            ) : (
+              <View><Text>Hey new guy! Add a card!</Text></View>
+            )
+          }
+        </View>
       </Container>
     )
+  }
+
+  _onOpenActionSheet = () => {
+    let options = ['Delete all cards', 'Delete This Deck', 'Cancel'];
+    let deleteAllCardsIndex = 0;
+    let deleteThisDeckIndex = 1;
+    let cancelButtonIndex = 2;
+
+    this.props.showActionSheetWithOptions({
+      options,
+      deleteThisDeckIndex,
+      cancelButtonIndex
+    },
+    (buttonIndex) => {
+      switch (buttonIndex) {
+        case deleteThisDeckIndex:
+          this.onDelete()
+      }
+    });
   }
 }
 
 const styles = StyleSheet.create({
-  cardActions: {
+  deckDisplay: {
+    padding: 20,
     flex: 1,
-    flexDirection: 'row',
+    backgroundColor: "#FDFBF2",
+  },
+
+  deckContainer: {
+    flex: 1,
+    flexDirection:'row',
+    backgroundColor: "#FDFBF2",
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  deckActions: {
-    flex: 1,
-    position: 'absolute',
-    bottom:50,
-    left: 0,
-    right: 0,
-
-  },
-  headerTitle: {
-    //TODO: figure out what constants can help here
-    maxWidth: 300,
-    paddingTop: 12
-  },
-  cardContainer: {
-      padding: 15,
-      flex: 1,
-      // justifyContent: "center"
   }
-})
-
-const cardContainer = ({
-    padding: 15,
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
 })
 
 function mapStateToProps(state, {navigation}){

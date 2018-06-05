@@ -51,7 +51,6 @@ function decks (state = initialState, action) {
     case EDIT_CARD:
       const {deckIndex, cardIndex, card} = action
       const newState = update(state, {list: { [deckIndex]: { cards:  { [cardIndex]: {$set: card}}}}})
-      console.log(action)
       return newState
 
 

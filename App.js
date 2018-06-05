@@ -8,6 +8,7 @@ import { persistor, store } from './src/store';
 import Navigator from './src/router';
 import { blue } from './src/utils/colors'
 import { removeAllDecks } from './src/actions/'
+import { setLocalNotification } from './src/utils/notifications'
 
 const AppContents = () => (
   <Provider store = {store}>
@@ -18,6 +19,10 @@ const AppContents = () => (
 
 
 export default class App extends React.Component {
+  componentDidMount(){
+    setLocalNotification()
+  }
+
   render() {
     return (
       <ActionSheetProvider>

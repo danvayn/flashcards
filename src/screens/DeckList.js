@@ -16,17 +16,12 @@ class DeckList extends Component {
     const params = navigation.state.params || {};
 
     return {
-      header: (
-        <Header>
-            <Left/>
-            <Body><Title>Deck List</Title></Body>
-            <Right>
-              <Button transparent onPress={params.onOpenActionSheet}>
-              <Icon name='more'/>
-            </Button>
-            </Right>
-        </Header>
-    )
+      title: "Deck List",
+      headerRight: (
+        <Button transparent onPress={params.onOpenActionSheet}>
+          <Icon name='more'/>
+        </Button>
+      )
     }
   }
 
@@ -39,11 +34,10 @@ class DeckList extends Component {
   }
 
   selectDeck = (title, index) => {
-
     this.props.navigation.navigate(
-              'DeckDetails',
-              { deckTitle: title, deckIndex: index }
-            )
+      'DeckDetails',
+      { deckTitle: title, deckIndex: index }
+    )
   }
 
   onDelete = () => {

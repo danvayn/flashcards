@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 
 import { Container, Header, Button, Body, Content, Card, CardItem, Text } from 'native-base'
-import { black, lightPurp } from '../utils/colors'
+import { black, white } from '../utils/colors'
 
 
 class FlashCard extends Component {
@@ -29,24 +29,25 @@ class FlashCard extends Component {
     })
   }
 
-  flipCard(){
+  flipCard(duration=750){
     if(this.value >= 90){
       Animated.timing(this.animatedValue,{
         toValue: 0,
-        duration: 750,
+        duration: duration,
       }).start()
     } else {
       Animated.timing(this.animatedValue,{
         toValue: 180,
-        duration: 750,
+        duration: duration,
       }).start()
     }
   }
+
   flipCardInstantly(){
     if(this.value >= 90){
       Animated.timing(this.animatedValue,{
         toValue: 0,
-        duration: 1,
+        // duration: 1,
       }).start()
     } else {
       Animated.timing(this.animatedValue,{
@@ -54,15 +55,18 @@ class FlashCard extends Component {
         duration: 1,
       }).start()
     }
-
   }
+
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.flipped !== this.props.flipped) {
       if(prevProps.front === this.props.front) {
+      //if the only prop that changed was flipped, flip card
       this.flipCard()
     } else {
-      this.flipCardInstantly()
+      Animated.sequence([
+        this.flipCard(1),
+      ])
     }
     }
 }
@@ -81,24 +85,30 @@ class FlashCard extends Component {
               <Text style={[styles.cardHeader, styles.questionHeader]}>Question:</Text>
             </CardItem>
             <CardItem>
-              <Body>
-                <Text style={styles.flipText}>
-                  {front}
-                </Text>
-              </Body>
+              <Text style={styles.flipText}>
+                {front}
+              </Text>
             </CardItem>
+            {onPress && (
+              <CardItem footer>
+                <Text>Press the card to edit it.</Text>
+              </CardItem>
+            )}
         </Animated.View>
         <Animated.View style={[backAnimatedStyle, styles.flipCard, styles.flipCardBack]}>
           <CardItem header>
             <Text style={[styles.cardHeader, styles.answerHeader]}>Answer:</Text>
           </CardItem>
             <CardItem>
-              <Body>
-                <Text style={styles.flipText}>
-                 {back}
-                </Text>
-              </Body>
+              <Text style={styles.flipText}>
+               {back}
+              </Text>
             </CardItem>
+            {onPress && (
+              <CardItem footer>
+                <Text>Press the card to edit it.</Text>
+              </CardItem>
+            )}
           </Animated.View>
         </View>
         </TouchableWithoutFeedback>
@@ -108,28 +118,28 @@ class FlashCard extends Component {
 }
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
-  },
   cardHeader: {
 
   },
   flipCard: {
-    backgroundColor: "#FDFBF2",
-    height: 300,
-    width: 300,
+    borderRadius: 5,
+    borderWidth: 0.7,
+    borderColor: '#d6d7da',
+    backgroundColor: white,
     alignItems: 'center',
     justifyContent: 'center',
     backfaceVisibility: "hidden",
+    width: "100%",
+    height: "100%",
   },
   flipCardBack: {
     position: "absolute",
-    backgroundColor: "#f1e39b",
   },
   flipText: {
-    color: black
+    margin:10,
+    color: black,
+    fontSize: 30,
+    textAlign:'center'
   },
 })
 

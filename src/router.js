@@ -34,6 +34,7 @@ const NavigationStack = StackNavigator({
   },
 })
 
+
 const RootStack = StackNavigator(
   {
     Main: {
