@@ -11,10 +11,11 @@ const CardContainer = (props) => {
     <View style={{flex: 1}}>
     <View style={[{flex: 1},(props.cardStyle || {})]}>
       <FlashCard
-        onPress={props.onPress}
+        cardID={card.id}
         front={card.front}
         back={card.back}
         flipped={flipped}
+        onLongPress={props.onLongPress}
         onPress={props.onPress}
       />
     </View>
@@ -30,6 +31,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingTop: 10,
+    marginBottom: 0,
   },
 })
 

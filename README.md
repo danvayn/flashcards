@@ -13,3 +13,5 @@ This is Project #3 of the Udacity React Developer nanodegree. It is a simple app
 - complete parity between iOS and Android thanks to [CRNA](https://github.com/react-community/create-react-native-app) and native-base.
 
 To start the project, simply cd in, yarn install and yarn start to start the app. NPM may be used in place of yarn but this has not been tested and at the moment is likely to not work.
+
+Devtools connected.

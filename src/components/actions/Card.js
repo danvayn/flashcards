@@ -1,11 +1,12 @@
 import React from 'react'
-import {View, StyleSheet } from 'react-native'
-import {Button, Icon, Text} from 'native-base'
+import { View, StyleSheet } from 'react-native'
+import { Button, Icon, Text } from 'native-base'
+import purple from '../../utils/colors'
+
 
 const CardActions = (props) => {
-  const actionStyle = props.style || {}
   return(
-    <View style={[styles.cardActions, actionStyle]}>
+    <View style={styles.cardActions}>
       <Button style={styles.actionButton} iconLeft onPress={() => props.onPrevious()}>
         <Icon name="arrow-back" />
         <Text>Previous</Text>
@@ -29,6 +30,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   actionButton: {
+    backgroundColor: purple,
     flex: 1,
     marginLeft: 5,
     marginRight: 5,

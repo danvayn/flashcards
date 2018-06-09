@@ -1,6 +1,4 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import styled from "styled-components"
 import { connect } from 'react-redux'
 import { View } from 'react-native'
 import { Container, Content, Text, Button } from 'native-base'

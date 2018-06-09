@@ -1,17 +1,17 @@
-import React, { Component } from 'react'
+import { Container, Body, Left, Right, Button, Icon, List, ListItem, Text } from 'native-base'
 import { Alert, StyleSheet, View, Platform, FlatList } from 'react-native'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux';
-import styled from "styled-components";
+import { connectActionSheet } from '@expo/react-native-action-sheet';
+import { connect } from 'react-redux'
+import React, { Component } from 'react'
+
+import CardContainer from '../containers/Card'
+import FlashCard from '../components/FlashCard'
 import CenteredText from '../components/CenteredText'
 import CardActions from '../components/actions/Card'
 import TextButton from '../components/TextButton'
-import { Footer, Container, CardItem, Card, Header, Body, Title, Subtitle, Content, Left, Right, Button, Icon, List, ListItem, Text } from 'native-base';
-import {addOrRemove} from '../utils/helpers'
-import CardContainer from '../containers/Card'
-import FlashCard from '../components/FlashCard'
+
 import { white } from '../utils/colors'
-import { connectActionSheet } from '@expo/react-native-action-sheet';
+import {addOrRemove} from '../utils/helpers'
 import { deleteDeck } from '../actions'
 
 @connectActionSheet
@@ -40,7 +40,7 @@ class DeckDetails extends Component {
     flippedCards: [],
   }
 
-  componentWillMount() {
+  componentDidMount() {
      this.props.navigation.setParams({ onOpenActionSheet: this._onOpenActionSheet });
   }
   componentDidUpdate() {
@@ -100,7 +100,7 @@ class DeckDetails extends Component {
       <Container>
           <ListItem icon onPress={() => this.props.navigation.navigate('AddCard',{deckTitle, deckIndex})}>
             <Left>
-                <Icon name="plane" />
+                <Icon name="create" />
               </Left>
               <Body>
                 <Text>Add a Card</Text>
@@ -112,7 +112,7 @@ class DeckDetails extends Component {
           {this.props.cards.length > 0 &&
             <ListItem icon onPress={() => this.props.navigation.navigate('TakeQuiz',{deckTitle, deckIndex})}>
               <Left>
-                  <Icon name="plane" />
+                  <Icon name="bookmarks" />
                 </Left>
                 <Body>
                   <Text>Take a Quiz</Text>
@@ -125,11 +125,12 @@ class DeckDetails extends Component {
           <View style={styles.deckContainer}>
           {card ?
             (<View style={styles.deckDisplay}>
-              <CenteredText>Card {this.state.cardIndex+1} out of the {this.props.cards.length} in this deck.</CenteredText>
+              <CenteredText style={styles.progressDisplay}>Card {this.state.cardIndex+1} out of the {this.props.cards.length} in this deck.</CenteredText>
               <CardContainer
                 flipCurrent={this.state.flippedCards.includes(card.id) ? true : false}
                 currentCard={card}
-                onPress={() => this.props.navigation.navigate('EditCard',{deckIndex, cardIndex})}
+                onPress={() => this.onFlip(card.id)}
+                onLongPress={() => this.props.navigation.navigate('EditCard',{deckIndex, cardIndex})}
               >
                 <CardActions onPrevious={this.onPrevious} onNext={this.onNext} onFlip={() => this.onFlip(card.id)}/>
               </CardContainer>
@@ -180,6 +181,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#FDFBF2",
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  progressDisplay: {
+    marginBottom: 10,
   }
 })
 

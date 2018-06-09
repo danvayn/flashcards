@@ -1,11 +1,10 @@
-import React from 'react';
-import { TextInput, View } from 'react-native';
-import ErrorText from './ErrorText'
+
+import React from 'react'
+import { TextInput, View } from 'react-native'
 import { Text, Item, Label, Form, Input, Button } from 'native-base'
-import { withFormik } from 'formik';
+import { withFormik } from 'formik'
 
 const enhancer = withFormik({
-  // Transform outer props into form values
   mapPropsToValues: props => ({ front: '', back: ''}),
   validate: (values, props) => {
     const errors = {};
@@ -31,6 +30,8 @@ const enhancer = withFormik({
 const MyReactNativeForm = props => {
   return (
   <Form>
+    { props.errors.front && <ErrorText>{props.errors.front}</ErrorText> }
+    { props.errors.back && <ErrorText>{props.errors.back}</ErrorText> }
     <Item fixedLabel error={props.errors.front ? (true):(false)}>
       <Label>Question</Label>
       <Input

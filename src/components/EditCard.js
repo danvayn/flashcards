@@ -1,8 +1,7 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import styled from "styled-components"
-import { connect } from 'react-redux'
 import { Container, Content, Text, Button } from 'native-base'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
 import EditCardForm from '../components/forms/EditCard'
 import { editCard } from '../actions'
 
@@ -53,7 +52,7 @@ class EditCard extends Component {
 }
 
 function mapStateToProps(state, {navigation}){
-  const {deckIndex, cardIndex} = navigation.state.params
+  const { deckIndex, cardIndex } = navigation.state.params
   const deck = state.decks.list[deckIndex]
   return {
     deckID: deck.id,
@@ -62,7 +61,7 @@ function mapStateToProps(state, {navigation}){
 }
 
 function mapDispatchToProps(dispatch, {navigation}){
-    const {deckID, deckIndex, cardIndex } = navigation.state.params
+    const { deckID, deckIndex, cardIndex } = navigation.state.params
 
   return {
     editCard: (card) => { dispatch(editCard(deckIndex, cardIndex, card))},

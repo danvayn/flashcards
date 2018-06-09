@@ -1,4 +1,5 @@
-import { timeToString, generateDecks } from '../utils/helpers'
+import { timeToString } from '../utils/helpers'
+import { generateDecks } from '../utils/generators'
 import {v4 as uuidv4} from 'uuid'
 
 export const ACTION_ERROR = 'ACTION_ERROR'

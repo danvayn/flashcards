@@ -7,9 +7,9 @@ import {
   ADD_CARD_TO_DECK,
   REMOVE_ALL_DECKS,
   POPULATE_DECKS,
-} from '../actions/';
+} from '../actions/'
 
-import update from 'immutability-helper';
+import update from 'immutability-helper'
 
 const initialState = {
 };

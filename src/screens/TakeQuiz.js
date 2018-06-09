@@ -1,13 +1,15 @@
-import React from 'react'
 import { Alert, StyleSheet, View, Platform, FlatList } from 'react-native'
-import PropTypes from 'prop-types'
-import styled from "styled-components"
-import { connect } from 'react-redux';
+import { Container, Button, Icon, List, ListItem, Text } from 'native-base'
+import { connect } from 'react-redux'
+import React from 'react'
+
+import { clearLocalNotification, setLocalNotification } from '../utils/notifications'
+import { shuffleArray } from '../utils/helpers'
+
+
 import CardContainer from '../containers/Card'
 import CenteredText from '../components/CenteredText'
 import QuizActions from '../components/actions/Quiz'
-import { Container, CardItem, Card, Header, Body, Title, Subtitle, Content, Left, Right, Button, Icon, List, ListItem, Text } from 'native-base';
-import { clearLocalNotification, setLocalNotification } from '../utils/notifications'
 
 class TakeQuiz extends React.Component {
 
@@ -39,7 +41,7 @@ class TakeQuiz extends React.Component {
       `You got ${this.state.currentScore}/${this.state.cards.length} cards right!
       Would you like to take it over?`,
       [
-        {text: 'Yes', onPress: () => this.resetQuiz()},
+        {text:'Yes', onPress: () => this.resetQuiz()},
         { text:'No', onPress: () => this.props.navigation.goBack(), style: 'cancel' }
       ],
       { onDismiss: () => {this.props.navigation.goBack()}}
@@ -47,8 +49,8 @@ class TakeQuiz extends React.Component {
   }
 
   resetQuiz = () => {
-    const cards = this.state.cards //shuffle Cards here
-    this.setState({cardIndex: 0, cards: cards, questionAnswered: false, currentScore: 0, currentTotal: 0})
+    const shuffledCards = shuffleArray(this.state.cards) //shuffle Cards here
+    this.setState({cardIndex: 0, cards: shuffledCards, questionAnswered: false, currentScore: 0, currentTotal: 0})
   }
 
   showFeedback = () => {
@@ -74,7 +76,7 @@ class TakeQuiz extends React.Component {
   }
 
   render(){
-    const {cards, cardIndex} = this.state
+    const { cards, cardIndex } = this.state
     return(
       <Container>
         <View style={styles.deckDisplay}>
@@ -117,7 +119,7 @@ function mapStateToProps(state, {navigation}){
     deckID: deck.id,
     deckTitle: deck.title,
     deckIndex: navigation.state.params.deckIndex,
-    cards: deck.cards,
+    cards: shuffleArray(deck.cards),
   }
 }
 

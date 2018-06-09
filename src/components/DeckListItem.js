@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
-import CenteredText from './CenteredText'
 import { white, gray } from '../utils/colors'
+import CenteredText from './CenteredText'
 
 const DeckListItem = (props) => {
   const {deck, onPress} = props

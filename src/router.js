@@ -1,7 +1,5 @@
+import { StackNavigator, createStackNavigator } from 'react-navigation'
 import React from 'react'
-import { FontAwesome, Ionicons } from '@expo/vector-icons'
-import { Platform } from 'react-native'
-import { TabNavigator, StackNavigator, createStackNavigator } from 'react-navigation'
 
 import DeckList from './screens/DeckList'
 import AddDeck from './screens/AddDeck'

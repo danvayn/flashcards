@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, Platform, FlatList } from 'react-native'
-import TextButton from '../components/TextButton'
-import { Container, Body, Content, Left, Right, Button, Icon, ListItem, Text } from 'native-base';
+import { StyleSheet, View, Platform, FlatList } from 'react-native';
+import { Container, Content, Left, Right, Button, Icon, Text } from 'native-base';
 import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import {purple, gray} from '../utils/colors'
-import { FontAwesome, Ionicons } from '@expo/vector-icons'
-import { connectActionSheet } from '@expo/react-native-action-sheet';
+import { connectActionSheet } from '@expo/react-native-action-sheet'
+
 import DeckListItem from '../components/DeckListItem'
+import {purple, gray} from '../utils/colors'
+import TextButton from '../components/TextButton'
 import { populateDecks, removeAllDecks } from '../actions'
 
 @connectActionSheet
@@ -25,15 +24,15 @@ class DeckList extends Component {
     }
   }
 
-  componentWillMount() {
-     this.props.navigation.setParams({ onOpenActionSheet: this._onOpenActionSheet });
-  }
-
   onPressDeck = (title, index) => {
     this.props.navigation.navigate(
       'DeckDetails',
       { deckTitle: title, deckIndex: index }
     )
+  }
+
+  componentDidMount(){
+    this.props.navigation.setParams({ onOpenActionSheet: this._onOpenActionSheet })
   }
 
   onDelete = () => {
@@ -63,8 +62,8 @@ class DeckList extends Component {
           onPress={() => this.props.navigation.navigate('AddDeck',{})}>
           <Text>Add a new Deck</Text>
       </Button>)
+
     return(
-      //field here
       <Container>
           {decks.length > 0 ? (
             <Content>
